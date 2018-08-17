@@ -3,15 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 
-public class RigidBodyController : MonoBehaviour {
-    
+public class RigidBodyController : MonoBehaviour
+{
+
 
     public float Speed = 0.05f;
-    public float JumpHeight = 0.05f;
+    public float JumpHeight = 0.14f;
     public float GroundDistance = 0.2f;
     public float DashDistance = 5f;
     public LayerMask Ground;
-
+    private float fallMultiplierFloat = 3f;
+    private float lowJumpMultiplierFloat = 2f;
+    enum Mode
+    {
+        Walk,
+        Run
+    };
+    private Mode curMode = Mode.Walk;
     private Animator _anim;
     private Rigidbody _body;
     private Vector3 _inputs = Vector3.zero;
@@ -19,7 +27,7 @@ public class RigidBodyController : MonoBehaviour {
     //private Transform _groundChecker;
 
     void Start()
-    {   
+    {
         _anim = GetComponent<Animator>();
         _body = GetComponent<Rigidbody>();
         //_groundChecker = transform.GetChild(0);
@@ -38,10 +46,20 @@ public class RigidBodyController : MonoBehaviour {
         if (_inputs != Vector3.zero)
             transform.forward = _inputs;
 
-        if (CrossPlatformInputManager.GetButtonDown("Jump"))
+        //faster falling
+        if (_body.velocity.y < 0)
         {
-            _body.AddForce(Vector3.up * Mathf.Sqrt(JumpHeight * -2f * Physics.gravity.y), ForceMode.VelocityChange);
-            _anim.SetTrigger("walk");
+            _body.velocity += Vector3.up* Physics.gravity.y * (fallMultiplierFloat - 1) * Time.deltaTime;
+        }
+
+        //control jump height by length of time jump button held
+        if (_body.velocity.y > 0 && !Input.GetButton("Jump")) {
+            _body.velocity += Vector3.up* Physics.gravity.y * (lowJumpMultiplierFloat - 1) * Time.deltaTime;
+        }
+        if (CrossPlatformInputManager.GetButtonUp("Jump"))
+        {
+            _body.AddForce(Vector3.up* Mathf.Sqrt(JumpHeight* -2f * Physics.gravity.y), ForceMode.VelocityChange);
+            _anim.SetTrigger("jump");
         }
         //if (Input.GetButtonDown("Dash"))
         //{
@@ -49,15 +67,41 @@ public class RigidBodyController : MonoBehaviour {
         //    _body.AddForce(dashVelocity, ForceMode.VelocityChange);
         //}
         if (!_inputs.x.Equals(0) || !_inputs.y.Equals(0)){
-              _anim.SetTrigger ("walk");
+            if (curMode == Mode.Walk)
+            {
+                Speed = 0.05f;
+                _anim.SetTrigger("walk");
+            } else {
+                Speed = 0.1f;
+                _anim.SetTrigger("run");
+            }
           } else {
-              _anim.SetTrigger ("idle");
+              _anim.SetTrigger("idle");
           }
+
+        if (CrossPlatformInputManager.GetButtonUp("RunWalk")){
+            if (curMode == Mode.Run)
+            {
+                curMode = Mode.Walk;
+            }
+            else
+            {
+                curMode = Mode.Run;
+            }
+        }
     }
 
 
     void FixedUpdate()
-    {
-        _body.MovePosition(_body.position + _inputs * Speed * Time.fixedDeltaTime);
+{
+    _body.MovePosition(_body.position + _inputs * Speed * Time.fixedDeltaTime);
+}
+
+    void ToggleRunAndWalk() {
+        if(curMode == Mode.Run){
+            curMode = Mode.Walk;
+        } else {
+            curMode = Mode.Run;
+        }
     }
 }
