@@ -7,11 +7,17 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 0
     path: 
-    guid: 1257efda9ace3439485a7e2c7516465e
+    guid: 00000000000000000000000000000000
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
-  - enabled: 1
+  - enabled: 0
     path: Assets/SavePlanes.unity
     guid: 009ac53763e614390ae7c1d6f7077720
+  - enabled: 0
+    path: Assets/PlacenoteMultiplayerKit/Scenes/MultiplayerSampleScene.unity
+    guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/MainScanningAndPlayScene.unity
+    guid: 853e9eae9384842579531bbfb7f9c8ea
   m_configObjects: {}

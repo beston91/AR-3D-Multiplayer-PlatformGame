@@ -8,7 +8,7 @@ public class RigidBodyController : MonoBehaviour
 
 
     public float Speed = 0.05f;
-    public float JumpHeight = 0.14f;
+    public float JumpHeight = 0.2f;
     public float GroundDistance = 0.2f;
     public float DashDistance = 5f;
     public LayerMask Ground;
@@ -56,10 +56,9 @@ public class RigidBodyController : MonoBehaviour
         if (_body.velocity.y > 0 && !Input.GetButton("Jump")) {
             _body.velocity += Vector3.up* Physics.gravity.y * (lowJumpMultiplierFloat - 1) * Time.deltaTime;
         }
-        if (CrossPlatformInputManager.GetButtonUp("Jump"))
+        if (CrossPlatformInputManager.GetButtonDown("Jump"))
         {
-            _body.AddForce(Vector3.up* Mathf.Sqrt(JumpHeight* -2f * Physics.gravity.y), ForceMode.VelocityChange);
-            _anim.SetTrigger("jump");
+            StartCoroutine("Jumping");
         }
         //if (Input.GetButtonDown("Dash"))
         //{
@@ -72,7 +71,7 @@ public class RigidBodyController : MonoBehaviour
                 Speed = 0.05f;
                 _anim.SetTrigger("walk");
             } else {
-                Speed = 0.1f;
+                Speed = 0.15f;
                 _anim.SetTrigger("run");
             }
           } else {
@@ -97,11 +96,10 @@ public class RigidBodyController : MonoBehaviour
     _body.MovePosition(_body.position + _inputs * Speed * Time.fixedDeltaTime);
 }
 
-    void ToggleRunAndWalk() {
-        if(curMode == Mode.Run){
-            curMode = Mode.Walk;
-        } else {
-            curMode = Mode.Run;
-        }
-    }
+    IEnumerator Jumping() {
+        _anim.SetTrigger("jump");
+        yield return new WaitForSeconds(0.5f);
+        _body.AddForce(Vector3.up * Mathf.Sqrt(JumpHeight * -2f * Physics.gravity.y), ForceMode.VelocityChange);
+
+    }   
 }

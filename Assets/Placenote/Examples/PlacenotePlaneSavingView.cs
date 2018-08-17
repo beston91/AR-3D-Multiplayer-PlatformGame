@@ -354,24 +354,16 @@ public class PlacenotePlaneSavingView : MonoBehaviour, PlacenoteListener
         Vector3 shapePosition = Camera.main.transform.position + Camera.main.transform.forward * 0.3f;
         Quaternion shapeRotation = Camera.main.transform.rotation;
 
-        System.Random rnd = new System.Random();
-        PrimitiveType type = (PrimitiveType)rnd.Next(0, 2);
+        UnityEngine.Object prefab = Resources.Load<UnityEngine.Object>("Prefab/Wall");
+        GameObject dest = Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
 
         ShapeInfo shapeInfo = new ShapeInfo();
         shapeInfo.px = shapePosition.x;
         shapeInfo.py = plane.transform.position.y + 0.010f;
         shapeInfo.pz = shapePosition.z;
-        shapeInfo.qx = shapeRotation.x;
-        shapeInfo.qy = shapeRotation.y;
-        shapeInfo.qz = shapeRotation.z;
-        shapeInfo.qw = shapeRotation.w;
-        shapeInfo.shapeType = type.GetHashCode();
- 
-
-        GameObject shape = ShapeFromInfo(shapeInfo);
-
+        dest.transform.position = new Vector3(shapeInfo.px, shapeInfo.py, shapeInfo.pz);
+        dest.transform.localScale = new Vector3(0.03f, 0.03f, 0.03f);
     }
-
 
     private GameObject ShapeFromInfo(ShapeInfo info)
     {
@@ -393,21 +385,17 @@ public class PlacenotePlaneSavingView : MonoBehaviour, PlacenoteListener
         Vector3 shapePosition = Camera.main.transform.position + Camera.main.transform.forward * 0.3f;
         Quaternion shapeRotation = Camera.main.transform.rotation;
 
-        System.Random rnd = new System.Random();
-        PrimitiveType type = PrimitiveType.Cube;
+        UnityEngine.Object prefab = Resources.Load<UnityEngine.Object>("Prefab/Castle Tower");
+        GameObject dest = Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
 
         ShapeInfo shapeInfo = new ShapeInfo();
         shapeInfo.px = shapePosition.x;
         shapeInfo.py = plane.transform.position.y + 0.010f;
         shapeInfo.pz = shapePosition.z;
-        shapeInfo.qx = shapeRotation.x;
-        shapeInfo.qy = shapeRotation.y;
-        shapeInfo.qz = shapeRotation.z;
-        shapeInfo.qw = shapeRotation.w;
-        shapeInfo.shapeType = type.GetHashCode();
+        dest.transform.position = new Vector3(shapeInfo.px, shapeInfo.py, shapeInfo.pz);
+        dest.transform.localScale = new Vector3(0.03f, 0.03f, 0.03f);
+       
+        dest.name = "Dest";
 
-
-        GameObject shape = ShapeFromInfo(shapeInfo);
-        shape.name = "Dest";
     }
 }
